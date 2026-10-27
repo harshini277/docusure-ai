@@ -1,0 +1,64 @@
+rule_version: "APH-2024-27-v2.3.1"
+cycle_name: "AICTE Approval Process Handbook 2024-25 to 2026-27"
+effective_date_start: "2024-04-01"
+effective_date_end: "2027-03-31"
+
+regulations:
+  - id: "AICTE-APH-2024-27-R4.1-LAND"
+    name: "Contiguous Land Area Requirement"
+    clause: "Chapter IV, Clause 4.1"
+    category: "Campus Infrastructure"
+    norms:
+      metro_acres: 2.5
+      urban_acres: 4.0
+      rural_acres: 7.5
+    rules:
+      - condition: "land_verified_acres >= norm_acres"
+        action: "PASS"
+      - condition: "land_verified_acres < norm_acres"
+        action: "FLAG_MISMATCH"
+        severity: "CRITICAL"
+        message: "Land shortfall below mandatory contiguous acreage"
+
+  - id: "AICTE-APH-2024-27-R4.2-FSR"
+    name: "Faculty to Student Ratio Norm"
+    clause: "Chapter IV, Table 4.2"
+    category: "Academic Faculty"
+    norms:
+      ug_engineering_ratio: 20  # 1:20
+      pg_engineering_ratio: 12  # 1:12
+      cadre_ratio: "1:2:6"     # Prof : Assoc Prof : Asst Prof
+    rules:
+      - condition: "actual_fsr <= 20"
+        action: "PASS"
+      - condition: "actual_fsr > 20"
+        action: "FLAG_MISMATCH"
+        severity: "MEDIUM"
+        message: "Faculty deficit for sanctioned student intake"
+
+  - id: "AICTE-APH-2024-27-R3.4-FIRE"
+    name: "Fire Safety Certificate Clearance"
+    clause: "Chapter III, Clause 3.4"
+    category: "Statutory Clearances"
+    norms:
+      validity_max_years: 3
+      ela_tamper_threshold: 0.65
+    rules:
+      - condition: "is_expired == True"
+        action: "FLAG_ANOMALY"
+        severity: "CRITICAL"
+        message: "Fire Safety NOC has expired or issuer record not found"
+      - condition: "ela_score > 65"
+        action: "FLAG_ANOMALY"
+        severity: "CRITICAL"
+        message: "Visual compression anomaly detected on certificate date glyphs"
+
+  - id: "AICTE-VIG-2026-GHOST-FACULTY"
+    name: "Cross-Institutional Faculty Roster Collision"
+    clause: "Regulation Bureau Vigilance Guideline 2026"
+    category: "Integrity & Anti-Fraud"
+    rules:
+      - condition: "cross_institution_collision == True"
+        action: "FLAG_ANOMALY"
+        severity: "CRITICAL"
+        message: "Faculty member identified concurrently on active rosters of multiple institutions"
